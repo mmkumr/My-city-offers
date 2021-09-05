@@ -22,6 +22,7 @@ class _AddItemsState extends State<AddItems> {
   String filetype = "Image";
   String _type = "Offer";
   GlobalKey<FormState> _formkey = GlobalKey<FormState>();
+  TextEditingController _valid = TextEditingController();
   List _category = [
     Categories(id: 1, name: "Sports"),
     Categories(id: 2, name: "Eating"),
@@ -142,6 +143,32 @@ class _AddItemsState extends State<AddItems> {
                         _selectedCategories = values;
                       },
                     ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: _valid,
+                    decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: "Validity of the ad in days",
+                      labelText: "Validity of the ad in days",
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                        color: Color(0xff6DFFF0),
+                      )),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "The name field cannot be empty";
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 Padding(

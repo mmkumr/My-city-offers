@@ -187,6 +187,7 @@ class _EditItemState extends State<EditItem> {
                     },
                   ),
                 ),
+                
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: MaterialButton(

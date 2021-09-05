@@ -25,11 +25,12 @@ class _SplashState extends State<Splash> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Image.asset(
-                "assets/img/logo.jpeg",
+                "assets/img/logo.png",
                 height: MediaQuery.of(context).size.height * 0.2,
               ),
             ),
             Text("My City Offers\nMechant version",
+                textAlign: TextAlign.center,
                 style: GoogleFonts.lobster(
                   color: Color(0xffffd700),
                   fontSize: 20,
