@@ -1,7 +1,10 @@
+import 'package:city_offers/Auth.dart';
 import 'package:city_offers/contact.dart';
 import 'package:city_offers/profile.dart';
+import 'package:city_offers/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class Sidebar extends StatefulWidget {
   Sidebar({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class Sidebar extends StatefulWidget {
 class _SidebarState extends State<Sidebar> {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
     return Drawer(
       child: Container(
         color: Colors.black,
@@ -59,6 +63,24 @@ class _SidebarState extends State<Sidebar> {
                 "Profile",
                 style: TextStyle(
                   color: Colors.white,
+                ),
+              ),
+            ),
+            Visibility(
+              visible: user.status == Status.Authenticated,
+              child: ListTile(
+                onTap: () {
+                  user.signOut();
+                },
+                leading: Icon(
+                  FontAwesomeIcons.addressCard,
+                  color: Colors.amber,
+                ),
+                title: Text(
+                  "Logout",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

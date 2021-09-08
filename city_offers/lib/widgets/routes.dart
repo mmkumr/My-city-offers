@@ -11,7 +11,6 @@ class MyRoute {
   static Map<String, WidgetBuilder> names = <String, WidgetBuilder>{
     Splash.name: (context) => Splash(),
     Auth.name: (context) => Auth(),
-    Signup.name: (context) => Signup(),
     Cities.name: (context) => Cities(),
     Contact.name: (context) => Contact(),
     Home.name: (context) => Home(),

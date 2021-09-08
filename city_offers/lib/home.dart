@@ -1,10 +1,13 @@
 import 'package:city_offers/cities.dart';
+import 'package:city_offers/providers/user_provider.dart';
 import 'package:city_offers/widgets/events.dart';
 import 'package:city_offers/widgets/local_ads.dart';
 import 'package:city_offers/widgets/offers.dart';
 import 'package:city_offers/widgets/sidebar.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -29,11 +32,30 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  initState() {
+    super.initState();
+    firebaseinit();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              onPressed: () {},
+              color: Colors.white,
+              icon: Icon(
+                Icons.share,
+              ),
+            ),
+          ),
+        ],
         title: Text(
           "My City Offers",
           style: TextStyle(
@@ -62,10 +84,13 @@ class _HomeState extends State<Home> {
                           ),
                           width: 60,
                           height: 60,
-                          child: Icon(Icons.person),
+                          child: Image.network(
+                            user.userDetails["photoUrl"],
+                          ),
                         ),
                         Text(
-                          "User Name",
+                          user.userDetails["name"].toString().substring(0,
+                              user.userDetails["name"].toString().indexOf(" ")),
                           style: TextStyle(
                             color: Colors.white,
                           ),
@@ -132,8 +157,8 @@ class _HomeState extends State<Home> {
                         child: Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Text(
-                            "Berhmapur",
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+                            user.userDetails["area"],
+                            style: TextStyle(fontSize: 15, color: Colors.white),
                           ),
                         ),
                       ),
@@ -166,5 +191,9 @@ class _HomeState extends State<Home> {
         onTap: _onItemTapped,
       ),
     );
+  }
+
+  void firebaseinit() async {
+    await Firebase.initializeApp();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:algolia/algolia.dart';
 import 'package:city_offers/home.dart';
+import 'package:city_offers/signup.dart';
 import 'package:flutter/material.dart';
 
 class Cities extends StatefulWidget {
@@ -131,7 +132,14 @@ class DisplaySearchResult extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushReplacementNamed(Home.name);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => Signup(
+              area: name,
+              city: parent,
+            ),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.only(left: 20, top: 20),

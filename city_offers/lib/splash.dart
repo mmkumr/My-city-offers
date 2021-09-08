@@ -1,7 +1,11 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:city_offers/Auth.dart';
+import 'package:city_offers/home.dart';
+import 'package:city_offers/providers/user_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class Splash extends StatefulWidget {
   Splash({Key? key}) : super(key: key);
@@ -12,6 +16,12 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  @override
+  initState() {
+    super.initState();
+    firebaseinit();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,7 +35,7 @@ class _SplashState extends State<Splash> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
               child: Image.asset(
-                "assets/img/logo.jpeg",
+                "assets/img/logo.png",
                 height: MediaQuery.of(context).size.height * 0.2,
               ),
             ),
@@ -43,5 +53,9 @@ class _SplashState extends State<Splash> {
         nextScreen: Auth(),
       ),
     );
+  }
+
+  void firebaseinit() async {
+    await Firebase.initializeApp();
   }
 }

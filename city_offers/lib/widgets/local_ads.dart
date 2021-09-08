@@ -17,7 +17,7 @@ class _LocalAdsState extends State<LocalAds> {
         itemCount: 8,
         gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
-          childAspectRatio: 1.5,
+          childAspectRatio: 1.7,
         ),
         itemBuilder: (BuildContext context, int index) {
           return Column(
