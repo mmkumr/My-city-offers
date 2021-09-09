@@ -44,10 +44,16 @@ class _SidebarState extends State<Sidebar> {
                 ),
                 currentAccountPicture: new CircleAvatar(
                   backgroundColor: Colors.grey,
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
+                  child: user.status == Status.Authenticated
+                      ? ClipOval(
+                          child: Image.network(
+                            user.userDetails["photoUrl"],
+                          ),
+                        )
+                      : Icon(
+                          Icons.person,
+                          color: Colors.black,
+                        ),
                 ),
               ),
             ),
@@ -71,9 +77,10 @@ class _SidebarState extends State<Sidebar> {
               child: ListTile(
                 onTap: () {
                   user.signOut();
+                  Navigator.of(context).pushReplacementNamed(Auth.name);
                 },
                 leading: Icon(
-                  FontAwesomeIcons.addressCard,
+                  Icons.logout,
                   color: Colors.amber,
                 ),
                 title: Text(

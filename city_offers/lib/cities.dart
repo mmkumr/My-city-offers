@@ -1,5 +1,4 @@
 import 'package:algolia/algolia.dart';
-import 'package:city_offers/home.dart';
 import 'package:city_offers/signup.dart';
 import 'package:flutter/material.dart';
 

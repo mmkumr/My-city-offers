@@ -1,6 +1,5 @@
 import 'package:city_offers/Auth.dart';
 import 'package:city_offers/cities.dart';
-import 'package:city_offers/home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_number/mobile_number.dart';
 import 'package:flutter/material.dart';
@@ -191,7 +190,7 @@ class _SignupState extends State<Signup> {
                             ) ==
                             true) {
                           Fluttertoast.showToast(msg: "Login Successfull");
-                          Navigator.of(context).pushReplacementNamed(Home.name);
+                          Navigator.of(context).pushReplacementNamed(Auth.name);
                         } else {
                           Fluttertoast.showToast(msg: "Login failed");
                           user.user.delete();

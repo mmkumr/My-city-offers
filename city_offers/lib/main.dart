@@ -1,6 +1,6 @@
 import 'package:city_offers/Auth.dart';
 import 'package:city_offers/cities.dart';
-import 'package:city_offers/home.dart';
+import 'package:city_offers/profile.dart';
 import 'package:city_offers/providers/user_provider.dart';
 import 'package:city_offers/splash.dart';
 import 'package:city_offers/widgets/routes.dart';
@@ -37,8 +37,7 @@ class ScreensController extends StatelessWidget {
       case Status.Authenticating:
         return Cities();
       case Status.Authenticated:
-        return Home();
+        return Auth();
     }
   }
-
 }
