@@ -1,5 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:city_offers_merchant/main.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -12,6 +13,12 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  @override
+  initState() {
+    super.initState();
+    firebaseinit();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -41,8 +48,12 @@ class _SplashState extends State<Splash> {
         splashTransition: SplashTransition.scaleTransition,
         splashIconSize: MediaQuery.of(context).size.height * 0.5,
         duration: 4000,
-        nextScreen: Home(),
+        nextScreen: Auth(),
       ),
     );
+  }
+
+  void firebaseinit() async {
+    await Firebase.initializeApp();
   }
 }
