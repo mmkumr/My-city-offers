@@ -38,7 +38,7 @@ class _AuthState extends State<Auth> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context);
-    if (start) {
+    if (start || events.length == 0) {
       getPostsAll();
       getCategories();
       setState(() {
@@ -290,24 +290,66 @@ class _AuthState extends State<Auth> {
           );
   }
 
-  getPostsAll() {
+  getPostsAll() async {
     final user = Provider.of<UserProvider>(context);
+    List data = [];
     user.getPostsAll("Offer", user.userDetails["area"]).then((value) {
+      data = value;
       if (mounted)
         setState(() {
-          offers = value;
+          offers = data.where((element) {
+            return element
+                .data()["vdate"]
+                .toDate()
+                .add(
+                  Duration(
+                    days: int.parse(
+                      element.data()["days"],
+                    ),
+                  ),
+                )
+                .isAfter(DateTime.now());
+          }).toList();
         });
     });
+
     user.getPostsAll("Local Ad.", user.userDetails["area"]).then((value) {
+      data = value;
       if (mounted)
         setState(() {
-          localAds = value;
+          localAds = data.where((element) {
+            return element
+                .data()["vdate"]
+                .toDate()
+                .add(
+                  Duration(
+                    days: int.parse(
+                      element.data()["days"],
+                    ),
+                  ),
+                )
+                .isAfter(DateTime.now());
+          }).toList();
         });
     });
+
     user.getPostsAll("Event", user.userDetails["area"]).then((value) {
+      data = value;
       if (mounted)
         setState(() {
-          events = value;
+          events = data.where((element) {
+            return element
+                .data()["vdate"]
+                .toDate()
+                .add(
+                  Duration(
+                    days: int.parse(
+                      element.data()["days"],
+                    ),
+                  ),
+                )
+                .isAfter(DateTime.now());
+          }).toList();
         });
     });
   }

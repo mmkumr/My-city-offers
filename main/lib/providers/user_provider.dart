@@ -67,20 +67,8 @@ class UserProvider with ChangeNotifier {
     return _firestore
         .collection("posts")
         .where("promotionType", isEqualTo: type)
+        .where("verified", isEqualTo: "true")
         .where("areas", arrayContains: area)
-        .get()
-        .then((snap) {
-      return snap.docs;
-    });
-  }
-
-  Future<List<DocumentSnapshot>> getPostsCat(
-      String type, String area, category) {
-    return _firestore
-        .collection("posts")
-        .where("promotionType", isEqualTo: type)
-        .where("areas", arrayContains: area)
-        .where("categories", arrayContains: category)
         .get()
         .then((snap) {
       return snap.docs;

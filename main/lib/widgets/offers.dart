@@ -34,26 +34,22 @@ class _OffersState extends State<Offers> {
               Row(
                 children: [
                   Expanded(
-                    child: Center(
-                      child: MaterialButton(
-                        minWidth: MediaQuery.of(context).size.width * 0.5,
-                        color: Colors.white70,
-                        onPressed: () {},
-                        child: Text("Details"),
-                      ),
+                    child: MaterialButton(
+                      minWidth: MediaQuery.of(context).size.width * 0.5,
+                      color: Colors.white70,
+                      onPressed: () {},
+                      child: Text("Details"),
                     ),
                   ),
                   VerticalDivider(
                     width: 5,
                   ),
                   Expanded(
-                    child: Center(
-                      child: MaterialButton(
-                        minWidth: MediaQuery.of(context).size.width * 0.5,
-                        color: Colors.white70,
-                        onPressed: () {},
-                        child: Text("Copy code"),
-                      ),
+                    child: MaterialButton(
+                      minWidth: MediaQuery.of(context).size.width * 0.5,
+                      color: Colors.white70,
+                      onPressed: () {},
+                      child: Text("Copy code"),
                     ),
                   ),
                 ],
