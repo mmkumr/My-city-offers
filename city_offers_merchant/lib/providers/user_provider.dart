@@ -60,7 +60,8 @@ class UserProvider with ChangeNotifier {
       String promotionType,
       List categories,
       String days,
-      List address,
+      List city,
+      List area,
       String description,
       String uid) async {
     try {
@@ -74,7 +75,8 @@ class UserProvider with ChangeNotifier {
         'promotionType': promotionType,
         'categories': categories,
         'days': days,
-        'address': address,
+        'cities': city,
+        "area": area,
         'description': description,
         "verified": 0,
         "userId": uid,

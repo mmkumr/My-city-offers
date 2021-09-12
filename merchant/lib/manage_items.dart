@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:after_layout/after_layout.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'edit_item.dart';
 import 'providers/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,6 +56,16 @@ class _ManageItemsState extends State<ManageItems> {
                 Card(
                   color: Colors.black,
                   child: ListTile(
+                    onLongPress: () {
+                      Clipboard.setData(
+                        new ClipboardData(
+                          text: posts[index].data()["id"],
+                        ),
+                      );
+                      Fluttertoast.showToast(
+                        msg: "Post id copied to clipboard",
+                      );
+                    },
                     title: Column(
                       children: [
                         Padding(
@@ -85,13 +97,16 @@ class _ManageItemsState extends State<ManageItems> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          posts[index].data()["verified"] == 0
+                          posts[index].data()["verified"] == "0"
                               ? "Not verified by admin"
                               : "Expiry date: " +
-                                  posts[index]
-                                      .data()["verified"]
-                                      .add(Duration(days: 10))
-                                      .toString(),
+                                  (posts[index].data()["vdate"].toDate().add(
+                                        Duration(
+                                          days: int.parse(
+                                            posts[index].data()["days"],
+                                          ),
+                                        ),
+                                      )).toString(),
                           style: TextStyle(
                             color: Colors.white,
                           ),
@@ -105,30 +120,11 @@ class _ManageItemsState extends State<ManageItems> {
                     Expanded(
                       child: MaterialButton(
                         onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => EditItem(),
-                            ),
-                          );
-                        },
-                        color: Colors.amber,
-                        child: Text(
-                          "Edit",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: MaterialButton(
-                        onPressed: () {
                           user.deletePost(posts[index].data()["id"]);
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ManageItems()
-                            ),
+                                builder: (context) => ManageItems()),
                           );
                         },
                         color: Colors.amber,

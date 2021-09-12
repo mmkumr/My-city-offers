@@ -46,7 +46,6 @@ class _SplashState extends State<Splash> {
         backgroundColor: Colors.black,
         splashTransition: SplashTransition.scaleTransition,
         splashIconSize: MediaQuery.of(context).size.height * 0.5,
-        duration: 4000,
         nextScreen: Auth(),
       ),
     );

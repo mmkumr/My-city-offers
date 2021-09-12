@@ -11,11 +11,12 @@ void main() async {
     ChangeNotifierProvider(
       create: (_) => UserProvider.initialize(),
       child: MaterialApp(
-        themeMode: ThemeMode.dark,
         debugShowCheckedModeBanner: false,
         initialRoute: Splash.name,
         routes: MyRoute.names,
-        theme: ThemeData(primarySwatch: Colors.amber),
+        theme: ThemeData(
+          primarySwatch: Colors.amber,
+        ),
         home: ScreensController(),
       ),
     ),
@@ -26,7 +27,6 @@ class ScreensController extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context);
-    print(user.status);
     switch (user.status) {
       case Status.Uninitialized:
         return Splash();

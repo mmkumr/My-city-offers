@@ -1,4 +1,7 @@
+import 'package:admin/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class Categories extends StatefulWidget {
   Categories({Key? key}) : super(key: key);
@@ -10,8 +13,18 @@ class Categories extends StatefulWidget {
 class _CategoriesState extends State<Categories> {
   GlobalKey<FormState> updateCategory = GlobalKey<FormState>();
   TextEditingController _category = TextEditingController();
+  List categories = [];
+  bool start = true;
   @override
   Widget build(BuildContext context) {
+    if (start) {
+      getCategories();
+      setState(() {
+        start = false;
+      });
+    }
+
+    final user = Provider.of<UserProvider>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -25,7 +38,7 @@ class _CategoriesState extends State<Categories> {
         ),
       ),
       body: ListView.builder(
-        itemCount: 20,
+        itemCount: categories.length,
         itemBuilder: (BuildContext context, int index) {
           return Padding(
             padding: const EdgeInsets.all(20.0),
@@ -33,7 +46,7 @@ class _CategoriesState extends State<Categories> {
               children: [
                 Card(
                   child: ListTile(
-                    title: Text("name of the category " + index.toString()),
+                    title: Text(categories[index]),
                   ),
                 ),
                 Row(
@@ -41,8 +54,7 @@ class _CategoriesState extends State<Categories> {
                     Expanded(
                       child: MaterialButton(
                         onPressed: () {
-                          _category.text =
-                              "name of the category " + index.toString();
+                          _category.text = categories[index];
                           showDialog(
                             context: context,
                             builder: (ctx) => AlertDialog(
@@ -77,7 +89,11 @@ class _CategoriesState extends State<Categories> {
                                   onPressed: () {
                                     if (updateCategory.currentState!
                                         .validate()) {
-                                      print(_category.text);
+                                      categories[index] = _category.text;
+                                      user.updateCategory(categories);
+                                      Navigator.of(context).pop();
+                                      Fluttertoast.showToast(
+                                          msg: "Category added");
                                     }
                                   },
                                   child: Text("Add"),
@@ -89,6 +105,12 @@ class _CategoriesState extends State<Categories> {
                                   child: Text("cancel"),
                                 ),
                               ],
+                            ),
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Categories(),
                             ),
                           );
                         },
@@ -104,7 +126,18 @@ class _CategoriesState extends State<Categories> {
                     VerticalDivider(),
                     Expanded(
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          categories.remove(categories[index]);
+                          user.updateCategory(categories);
+                          Navigator.of(context).pop();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Categories(),
+                            ),
+                          );
+                          Fluttertoast.showToast(msg: "Category deleted");
+                        },
                         color: Colors.amber,
                         child: Text(
                           "Delete",
@@ -122,5 +155,15 @@ class _CategoriesState extends State<Categories> {
         },
       ),
     );
+  }
+
+  getCategories() {
+    final user = Provider.of<UserProvider>(context);
+    user.getCategories().then((value) {
+      if (mounted)
+        setState(() {
+          categories = value;
+        });
+    });
   }
 }

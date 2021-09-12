@@ -1,3 +1,10 @@
+import 'package:admin/providers/user_provider.dart';
+import 'package:algolia/algolia.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+
 import 'ads_list.dart';
 import 'categories.dart';
 import 'offer_requests.dart';
@@ -5,31 +12,19 @@ import 'offers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.blue),
-      home: Home(),
-    );
-  }
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => UserProvider.initialize(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primarySwatch: Colors.blue),
+        home: Home(),
+      ),
+    ),
+  );
 }
 
 class Top {
@@ -50,21 +45,40 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List dasboarditems = [
-    {"title": "Normal users", "value": "100"},
-    {"title": "Merchants", "value": "2584"},
-    {"title": "Offer Requests", "value": "18"},
-    {"title": "Offers", "value": "345"},
-  ];
+  Algolia _algoliaApp = Algolia.init(
+    applicationId: 'IGCCEEE2PN', //ApplicationID,
+    apiKey: 'cd9cd84a191e989f312739113d07d56a', //admin api key in flutter code
+  );
   List selectedTopAds = [];
   TextEditingController _category = TextEditingController();
+  TextEditingController _city = TextEditingController();
+  TextEditingController _area = TextEditingController();
   TextEditingController imagePrice = TextEditingController();
   TextEditingController videoPrice = TextEditingController();
   GlobalKey<FormState> addCategory = GlobalKey<FormState>();
+  GlobalKey<FormState> addPlace = GlobalKey<FormState>();
   GlobalKey<FormState> price = GlobalKey<FormState>();
+  int normalUsers = 0;
+  int merchants = 0;
+  int requests = 0;
+  int offers = 0;
+  bool start = true;
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
+    if (start) {
+      getCount();
+      setState(() {
+        start = false;
+      });
+    }
+    List dasboarditems = [
+      {"title": "Normal users", "value": normalUsers.toString()},
+      {"title": "Merchants", "value": merchants.toString()},
+      {"title": "Offer Requests", "value": requests.toString()},
+      {"title": "Posts", "value": offers.toString()},
+    ];
     return DefaultTabController(
       length: 2,
       initialIndex: 1,
@@ -133,7 +147,12 @@ class _HomeState extends State<Home> {
                                 FlatButton(
                                   onPressed: () {
                                     if (addCategory.currentState!.validate()) {
-                                      print(_category.text);
+                                      user.addCategory(_category.text);
+                                      Navigator.of(context).pop();
+                                      Fluttertoast.showToast(
+                                          msg: "Category added");
+                                      addCategory.currentState!.reset();
+                                      _category.clear();
                                     }
                                   },
                                   child: Text("Add"),
@@ -179,7 +198,7 @@ class _HomeState extends State<Home> {
                           );
                         },
                         title: Text(
-                          "Manage Offers",
+                          "Manage Posts",
                           style: TextStyle(),
                         ),
                       ),
@@ -195,7 +214,116 @@ class _HomeState extends State<Home> {
                           );
                         },
                         title: Text(
-                          "Offer requests",
+                          "Post requests",
+                          style: TextStyle(),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      color: Colors.white,
+                      child: ListTile(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: Text("Add City"),
+                              content: Form(
+                                key: addPlace,
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  child: ListView(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: _city,
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "City name",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "This field cannot be empty.";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: _area,
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Area name",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "This field cannot be empty.";
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    if (addPlace.currentState!.validate()) {
+                                      _algoliaApp.instance
+                                          .index("cities")
+                                          .addObject(<String, dynamic>{
+                                        "name": _area.text,
+                                        "parent": _city.text,
+                                      }).then((value) {
+                                        addPlace.currentState!.reset();
+                                        _city.clear();
+                                        _area.clear();
+                                        Fluttertoast.showToast(
+                                            msg: "Place added");
+                                      });
+                                    }
+                                  },
+                                  child: Text("Add"),
+                                ),
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("cancel"),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        title: Text(
+                          "Add cities",
                           style: TextStyle(),
                         ),
                       ),
@@ -476,7 +604,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    Card(
+                    /* Card(
                       color: Colors.white,
                       child: ListTile(
                         onTap: () {
@@ -560,7 +688,7 @@ class _HomeState extends State<Home> {
                           style: TextStyle(),
                         ),
                       ),
-                    ),
+                    ), */
                   ],
                 ),
               ),
@@ -617,5 +745,37 @@ class _HomeState extends State<Home> {
         ]),
       ),
     );
+  }
+
+  getCount() {
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    _firestore.collection("users").get().then((value) {
+      if (mounted)
+        setState(() {
+          normalUsers = value.docs.length;
+        });
+    });
+    _firestore.collection("merchants").get().then((value) {
+      if (mounted)
+        setState(() {
+          merchants = value.docs.length;
+        });
+    });
+    _firestore
+        .collection("posts")
+        .where('verified', isEqualTo: "0")
+        .get()
+        .then((value) {
+      if (mounted)
+        setState(() {
+          requests = value.docs.length;
+        });
+    });
+    _firestore.collection("posts").get().then((value) {
+      if (mounted)
+        setState(() {
+          offers = value.docs.length;
+        });
+    });
   }
 }

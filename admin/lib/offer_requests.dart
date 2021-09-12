@@ -1,4 +1,6 @@
+import 'package:admin/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class OfferRequests extends StatefulWidget {
   OfferRequests({Key? key}) : super(key: key);
@@ -10,8 +12,17 @@ class OfferRequests extends StatefulWidget {
 class _OfferRequestsState extends State<OfferRequests> {
   GlobalKey<FormState> updateCategory = GlobalKey<FormState>();
   TextEditingController _category = TextEditingController();
+  List posts = [];
+  bool start = true;
   @override
   Widget build(BuildContext context) {
+    if (start) {
+      getPosts();
+      setState(() {
+        start = false;
+      });
+    }
+    final user = Provider.of<UserProvider>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -25,7 +36,7 @@ class _OfferRequestsState extends State<OfferRequests> {
         ),
       ),
       body: ListView.builder(
-        itemCount: 20,
+        itemCount: posts.length,
         itemBuilder: (BuildContext context, int index) {
           String img;
           if (index % 2 == 0) {
@@ -49,7 +60,15 @@ class _OfferRequestsState extends State<OfferRequests> {
                   children: [
                     Expanded(
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          user.updateRequest(posts[index].data()["id"], "true");
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OfferRequests(),
+                            ),
+                          );
+                        },
                         color: Colors.amber,
                         child: Text(
                           "Accept",
@@ -61,7 +80,16 @@ class _OfferRequestsState extends State<OfferRequests> {
                     ),
                     Expanded(
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          user.updateRequest(
+                              posts[index].data()["id"], "false");
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OfferRequests(),
+                            ),
+                          );
+                        },
                         color: Colors.amber,
                         child: Text(
                           "Reject",
@@ -79,5 +107,15 @@ class _OfferRequestsState extends State<OfferRequests> {
         },
       ),
     );
+  }
+
+  getPosts() async {
+    final user = Provider.of<UserProvider>(context);
+    List data = await user.postRequest();
+    if (mounted)
+      super.setState(() {
+        posts = data;
+        print(data.length);
+      });
   }
 }

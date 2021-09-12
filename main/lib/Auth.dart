@@ -11,6 +11,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
+import 'updateCities.dart';
+
 class Auth extends StatefulWidget {
   Auth({Key? key}) : super(key: key);
 
@@ -21,13 +23,12 @@ class Auth extends StatefulWidget {
 
 class _AuthState extends State<Auth> {
   List categoriesList = [];
-  String? _chosenValue;
+  String? _category;
   int _selectedIndex = 0;
-  List<Widget> _widgetOptions = <Widget>[
-    Offers(),
-    LocalAds(),
-    Events(),
-  ];
+  List offers = [];
+  List localAds = [];
+  List events = [];
+  bool start = true;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -35,14 +36,20 @@ class _AuthState extends State<Auth> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    getCategories();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context);
+    if (start) {
+      getPostsAll();
+      getCategories();
+      setState(() {
+        start = false;
+      });
+    }
+    List<Widget> _widgetOptions = <Widget>[
+      Offers(list: offers),
+      LocalAds(list: localAds),
+      Events(list: events),
+    ];
     return user.status == Status.Authenticated
         ? Scaffold(
             backgroundColor: Colors.black,
@@ -112,40 +119,51 @@ class _AuthState extends State<Auth> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        focusColor: Colors.white,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          hintText: "Category",
-                          hintStyle: TextStyle(
-                            color: Colors.orange,
+                    Visibility(
+                      visible: true,
+                      child: Expanded(
+                        child: DropdownButtonFormField<String>(
+                          focusColor: Colors.white,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintText: "Category",
+                            hintStyle: TextStyle(
+                              color: Colors.orange,
+                            ),
                           ),
+                          value: _category,
+                          elevation: 10,
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                          items: categoriesList
+                              .map<DropdownMenuItem<String>>((value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _category = value!;
+                            });
+                            getPostsCat();
+                            setState(() {
+                              _widgetOptions = <Widget>[
+                                Offers(list: offers),
+                                LocalAds(list: localAds),
+                                Events(list: events),
+                              ];
+                            });
+                          },
                         ),
-                        value: _chosenValue,
-                        elevation: 10,
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                        items: categoriesList
-                            .map<DropdownMenuItem<String>>((value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _chosenValue = value!;
-                          });
-                        },
                       ),
                     ),
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Navigator.of(context).pushNamed(Cities.name);
+                          Navigator.of(context).pushNamed(UpdateCities.name);
                         },
                         child: Container(
                           alignment: Alignment.topRight,
@@ -270,6 +288,42 @@ class _AuthState extends State<Auth> {
                     ),
                   ),
           );
+  }
+
+  getPostsAll() {
+    final user = Provider.of<UserProvider>(context);
+    user.getPostsAll("Offer", user.userDetails["area"]).then((value) {
+      if (mounted)
+        setState(() {
+          offers = value;
+        });
+    });
+    user.getPostsAll("Local Ad.", user.userDetails["area"]).then((value) {
+      if (mounted)
+        setState(() {
+          localAds = value;
+        });
+    });
+    user.getPostsAll("Event", user.userDetails["area"]).then((value) {
+      if (mounted)
+        setState(() {
+          events = value;
+        });
+    });
+  }
+
+  getPostsCat() {
+    setState(() {
+      localAds = localAds.where((element) {
+        return element.data()["categories"].contains(_category);
+      }).toList();
+      offers = offers.where((element) {
+        return element.data()["categories"].contains(_category);
+      }).toList();
+      events = events.where((element) {
+        return element.data()["categories"].contains(_category);
+      }).toList();
+    });
   }
 
   getCategories() async {

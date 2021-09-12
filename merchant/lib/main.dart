@@ -93,10 +93,7 @@ class _AuthState extends State<Auth> {
                                     ),
                                   );
                                 } else if (await user.signInWithGoogle() ==
-                                    "old") {
-                                  Fluttertoast.showToast(
-                                      msg: "Login successful");
-                                }
+                                    "old") {}
                               },
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:uuid/uuid.dart';
 
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
@@ -21,32 +22,22 @@ class UserProvider with ChangeNotifier {
     _auth.authStateChanges().listen(_onStateChanged);
   }
 
-  Future<bool> updateData(
-      String photoUrl,
-      String name,
-      String email,
-      String phone,
-      String age,
-      String area,
-      String state,
-      String gender,
-      String uid) async {
+  Future<bool> updateData(String photoUrl, String name, String email,
+      String phone, String age, String gender, String uid) async {
     try {
       _status = Status.Authenticating;
       notifyListeners();
-      await _firestore.collection('users').doc(uid).set({
+      await _firestore.collection('merchants').doc(uid).set({
         "photoUrl": photoUrl,
         "email": email,
         'name': name,
         'phone': phone,
         'age': age,
-        'area': area,
-        'city': state,
         'gender': gender,
         'userId': uid,
       });
       _userDetails = await _firestore
-          .collection("users")
+          .collection("merchants")
           .where('userId', isEqualTo: user.uid)
           .get()
           .then((value) {
@@ -63,41 +54,89 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<List<DocumentSnapshot>> getPostsAll(String type, String area) {
+  Future<bool> updatePost(
+      String url,
+      String fileType,
+      String promotionType,
+      List categories,
+      String days,
+      List address,
+      String description,
+      String uid) async {
+    try {
+      _status = Status.Authenticating;
+      notifyListeners();
+      String id = Uuid().v1();
+      await _firestore.collection('posts').doc(id).set({
+        "time": FieldValue.serverTimestamp(),
+        "id": id,
+        "url": url,
+        "fileType": fileType,
+        'promotionType': promotionType,
+        'categories': categories,
+        'days': days,
+        'address': address,
+        'description': description,
+        "verified": 0,
+        "userId": uid,
+      });
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  Future<List<DocumentSnapshot>> getPosts() {
     return _firestore
         .collection("posts")
-        .where("promotionType", isEqualTo: type)
-        .where("areas", arrayContains: area)
+        .where('verified', isEqualTo: "true")
         .get()
         .then((snap) {
       return snap.docs;
     });
   }
 
-  Future<List<DocumentSnapshot>> getPostsCat(
-      String type, String area, category) {
+  deletePost(String id) {
+    _firestore.collection("posts").doc(id).delete();
+  }
+
+  Future<List<DocumentSnapshot>> postRequest() {
     return _firestore
         .collection("posts")
-        .where("promotionType", isEqualTo: type)
-        .where("areas", arrayContains: area)
-        .where("categories", arrayContains: category)
+        .where('verified', isEqualTo: "0")
         .get()
         .then((snap) {
       return snap.docs;
     });
   }
 
-  updateArea(String cities, String area) async {
-    _firestore
-        .collection("users")
-        .doc(user.uid)
-        .update({"area": area, "cities": cities});
-    _userDetails = await _firestore
-        .collection("users")
-        .where('userId', isEqualTo: user.uid)
-        .get()
-        .then((value) {
-      return value.docs[0];
+  updateRequest(String id, String vdata) {
+    _firestore.collection("posts").doc(id).update({
+      "verified": vdata,
+      "vdate": DateTime.now(),
+    });
+  }
+
+  addCategory(String category) {
+    _firestore.collection("categories").get().then((value) {
+      List data = value.docs[0].data()["list"];
+      data.insert(0, category);
+      _firestore.collection("categories").doc("3fxDvAgSjUGYLROVD0Wm").update({
+        "list": data,
+      });
+    });
+  }
+
+  updateCategory(List categories) {
+    _firestore.collection("categories").doc("3fxDvAgSjUGYLROVD0Wm").update({
+      "list": categories,
+    });
+  }
+
+  Future<List> getCategories() {
+    return _firestore.collection("categories").get().then((snap) {
+      return snap.docs[0].data()["list"];
     });
   }
 
@@ -115,7 +154,7 @@ class UserProvider with ChangeNotifier {
       );
       UserCredential authResult = await _auth.signInWithCredential(credential);
       int userExist = await _firestore
-          .collection("users")
+          .collection("merchants")
           .where('userId', isEqualTo: user.uid)
           .get()
           .then((value) {
@@ -149,7 +188,7 @@ class UserProvider with ChangeNotifier {
     } else {
       _user = user;
       int userExist = await _firestore
-          .collection("users")
+          .collection("merchants")
           .where('userId', isEqualTo: user.uid)
           .get()
           .then((value) {
@@ -157,7 +196,7 @@ class UserProvider with ChangeNotifier {
       });
       if (userExist != 0) {
         _userDetails = await _firestore
-            .collection("users")
+            .collection("merchants")
             .where('userId', isEqualTo: user.uid)
             .get()
             .then((value) {

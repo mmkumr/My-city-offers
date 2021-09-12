@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Events extends StatefulWidget {
-  Events({Key? key}) : super(key: key);
+  final List list;
+  Events({Key? key, required this.list}) : super(key: key);
 
   @override
   _EventsState createState() => _EventsState();
@@ -14,7 +15,7 @@ class _EventsState extends State<Events> {
       height: MediaQuery.of(context).size.height * 0.725,
       child: GridView.builder(
         scrollDirection: Axis.vertical,
-        itemCount: 8,
+        itemCount: widget.list.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
           childAspectRatio: 1.7,

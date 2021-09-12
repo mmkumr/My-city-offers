@@ -36,7 +36,7 @@ class _SplashState extends State<Splash> {
                 height: MediaQuery.of(context).size.height * 0.2,
               ),
             ),
-            Text("My City Offers\nMechant version",
+            Text("My City Offers\nMerchant version",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.lobster(
                   color: Color(0xffffd700),
@@ -47,7 +47,7 @@ class _SplashState extends State<Splash> {
         backgroundColor: Colors.black,
         splashTransition: SplashTransition.scaleTransition,
         splashIconSize: MediaQuery.of(context).size.height * 0.5,
-        duration: 4000,
+        duration: 6000,
         nextScreen: Auth(),
       ),
     );

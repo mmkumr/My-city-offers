@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LocalAds extends StatefulWidget {
-  LocalAds({Key? key}) : super(key: key);
+  final List list;
+  LocalAds({Key? key, required this.list}) : super(key: key);
 
   @override
   _LocalAdsState createState() => _LocalAdsState();
@@ -14,7 +15,7 @@ class _LocalAdsState extends State<LocalAds> {
       height: MediaQuery.of(context).size.height * 0.725,
       child: GridView.builder(
         scrollDirection: Axis.vertical,
-        itemCount: 8,
+        itemCount: widget.list.length,
         gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
           childAspectRatio: 1.7,

@@ -51,6 +51,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "208513486933-1ilsf4rbnb5vuldgi1qammpqfi62vol0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.city_offers",
+            "certificate_hash": "a0ae164ed2c1cdf2bc8b9e09a184a21a5324f16e"
+          }
+        },
+        {
           "client_id": "208513486933-rkqprblst0q7i5umr0shn4rbd1ep46m3.apps.googleusercontent.com",
           "client_type": 3
         }

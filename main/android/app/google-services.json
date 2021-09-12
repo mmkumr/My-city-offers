@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:208513486933:android:a1775aa9bd72048ca444dc",
+        "mobilesdk_app_id": "1:208513486933:android:1a59aac6820f6a9ba444dc",
         "android_client_info": {
-          "package_name": "com.example.city_offers"
+          "package_name": "com.example.admin"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "208513486933-ncq5muf3euq4lc8nm1c711rgpgf66bst.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.admin",
+            "certificate_hash": "a0ae164ed2c1cdf2bc8b9e09a184a21a5324f16e"
+          }
+        },
         {
           "client_id": "208513486933-rkqprblst0q7i5umr0shn4rbd1ep46m3.apps.googleusercontent.com",
           "client_type": 3
@@ -36,17 +44,54 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:208513486933:android:f722dcff6e9ad067a444dc",
+        "mobilesdk_app_id": "1:208513486933:android:a1775aa9bd72048ca444dc",
         "android_client_info": {
-          "package_name": "com.example.main"
+          "package_name": "com.example.city_offers"
         }
       },
       "oauth_client": [
         {
-          "client_id": "208513486933-i8oj7fmlc4lgia6v1oiqkfg9q08ss986.apps.googleusercontent.com",
+          "client_id": "208513486933-1ilsf4rbnb5vuldgi1qammpqfi62vol0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.main",
+            "package_name": "com.example.city_offers",
+            "certificate_hash": "a0ae164ed2c1cdf2bc8b9e09a184a21a5324f16e"
+          }
+        },
+        {
+          "client_id": "208513486933-rkqprblst0q7i5umr0shn4rbd1ep46m3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU8yjkqiugquuKuygftUrB74wu501sEO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208513486933-rkqprblst0q7i5umr0shn4rbd1ep46m3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208513486933:android:d97102890aa0f531a444dc",
+        "android_client_info": {
+          "package_name": "com.example.merchant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208513486933-5ulpd2odbu1ts16lhg1ru8nch6vjjlkb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.merchant",
             "certificate_hash": "a0ae164ed2c1cdf2bc8b9e09a184a21a5324f16e"
           }
         },

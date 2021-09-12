@@ -1,4 +1,6 @@
+import 'package:admin/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Offers extends StatefulWidget {
   Offers({Key? key}) : super(key: key);
@@ -8,8 +10,17 @@ class Offers extends StatefulWidget {
 }
 
 class _OffersState extends State<Offers> {
+  List posts = [];
+  bool start = true;
   @override
   Widget build(BuildContext context) {
+    if (start) {
+      getPosts();
+      setState(() {
+        start = false;
+      });
+    }
+    final user = Provider.of<UserProvider>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -23,7 +34,7 @@ class _OffersState extends State<Offers> {
         ),
       ),
       body: ListView.builder(
-        itemCount: 20,
+        itemCount: posts.length,
         itemBuilder: (BuildContext context, int index) {
           String img;
           String expiry;
@@ -41,14 +52,37 @@ class _OffersState extends State<Offers> {
                 Card(
                   color: Colors.black,
                   child: ListTile(
-                    title: Image.asset(
-                      "assets/img/$img",
+                    title: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Type of post: " +
+                                posts[index].data()["promotionType"],
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        Image.asset(
+                          "assets/img/$img",
+                        ),
+                      ],
                     ),
                     subtitle: Center(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "Expiry date: $expiry",
+                          "Expiry date: " +
+                              posts[index]
+                                  .data()["vdate"]
+                                  .toDate()
+                                  .add(
+                                    Duration(
+                                      days: int.parse(
+                                        posts[index].data()["days"],
+                                      ),
+                                    ),
+                                  )
+                                  .toString(),
                           style: TextStyle(
                             color: Colors.white,
                           ),
@@ -61,7 +95,15 @@ class _OffersState extends State<Offers> {
                   children: [
                     Expanded(
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          user.deletePost(posts[index].data()["id"]);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Offers(),
+                            ),
+                          );
+                        },
                         color: Colors.amber,
                         child: Text(
                           "Delete",
@@ -79,5 +121,15 @@ class _OffersState extends State<Offers> {
         },
       ),
     );
+  }
+
+  getPosts() {
+    final user = Provider.of<UserProvider>(context);
+    user.getPosts().then((value) {
+      if (mounted)
+        super.setState(() {
+          posts = value;
+        });
+    });
   }
 }

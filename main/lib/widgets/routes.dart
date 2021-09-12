@@ -4,6 +4,7 @@ import 'package:main/Auth.dart';
 import 'package:main/profile.dart';
 import 'package:main/splash.dart';
 import 'package:flutter/material.dart';
+import 'package:main/updateCities.dart';
 
 class MyRoute {
   static Map<String, WidgetBuilder> names = <String, WidgetBuilder>{
@@ -11,6 +12,7 @@ class MyRoute {
     Auth.name: (context) => Auth(),
     Cities.name: (context) => Cities(),
     Contact.name: (context) => Contact(),
-    Profile.name: (context) => Profile()
+    Profile.name: (context) => Profile(),
+    UpdateCities.name: (context) => UpdateCities(),
   };
 }

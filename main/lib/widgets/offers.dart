@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Offers extends StatefulWidget {
-  Offers({Key? key}) : super(key: key);
+  final List list;
+  Offers({Key? key, required this.list}) : super(key: key);
 
   @override
   _OffersState createState() => _OffersState();
@@ -15,7 +16,7 @@ class _OffersState extends State<Offers> {
       height: MediaQuery.of(context).size.height * 0.725,
       child: GridView.builder(
         scrollDirection: Axis.vertical,
-        itemCount: 8,
+        itemCount: widget.list.length == 0 ? 0 : widget.list.length,
         gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
           childAspectRatio: 1.7,

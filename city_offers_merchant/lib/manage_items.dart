@@ -86,9 +86,15 @@ class _ManageItemsState extends State<ManageItems> {
                               ? "Not verified by admin"
                               : "Expiry date: " +
                                   posts[index]
-                                      .data()["verified"]
-                                      .add(Duration(days: 10))
-                                      .toString(),
+                                  .data()["vdate"]
+                                  .toDate()
+                                  .add(
+                                    Duration(
+                                      days: int.parse(
+                                          posts[index].data()["days"]),
+                                    ),
+                                  )
+                                  .toString(),
                           style: TextStyle(
                             color: Colors.white,
                           ),

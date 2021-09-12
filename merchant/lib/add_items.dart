@@ -64,16 +64,6 @@ class _AddItemsState extends State<AddItems> {
         });
       }
     });
-    for (int i = 0; i < widget.areas.length; ++i) {
-      setState(() {
-        selectedAddress.add(
-          {
-            "city": widget.cities[i],
-            "area": widget.areas[i],
-          },
-        );
-      });
-    }
   }
 
   Color getColor(Set<MaterialState> states) {
@@ -301,20 +291,12 @@ class _AddItemsState extends State<AddItems> {
                         child: Card(
                           child: ListTile(
                             onTap: () {},
-                            title: Text("Select Cities"),
+                            title: Text("Selected Cities: "),
                             subtitle: Padding(
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Wrap(
                                 children: [
-                                  Text(
-                                    "Selected cities: ",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  for (int i = 0;
-                                      i < selectedAddress.length;
-                                      i++)
+                                  for (int i = 0; i < widget.areas.length; i++)
                                     Padding(
                                       padding: const EdgeInsets.all(5.0),
                                       child: Neumorphic(
@@ -330,8 +312,7 @@ class _AddItemsState extends State<AddItems> {
                                         ),
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child:
-                                              Text(selectedAddress[i]["area"]),
+                                          child: Text(widget.areas[i]),
                                         ),
                                       ),
                                     ),
@@ -418,7 +399,8 @@ class _AddItemsState extends State<AddItems> {
                                         _type,
                                         selectedCategoryList,
                                         _valid.text,
-                                        selectedAddress,
+                                        widget.cities,
+                                        widget.areas,
                                         _description.text,
                                         user.userDetails["userId"],
                                       );
@@ -462,7 +444,8 @@ class _AddItemsState extends State<AddItems> {
                                       _type,
                                       selectedCategoryList,
                                       _valid.text,
-                                      selectedAddress,
+                                      widget.cities,
+                                      widget.areas,
                                       _description.text,
                                       user.userDetails["userId"],
                                     );

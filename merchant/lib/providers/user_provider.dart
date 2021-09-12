@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:uuid/uuid.dart';
 
@@ -55,14 +56,16 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<bool> updatePost(
-      String url,
-      String fileType,
-      String promotionType,
-      List categories,
-      String days,
-      List address,
-      String description,
-      String uid) async {
+    String url,
+    String fileType,
+    String promotionType,
+    List categories,
+    String days,
+    List cities,
+    List areas,
+    String description,
+    String uid,
+  ) async {
     try {
       _status = Status.Authenticating;
       notifyListeners();
@@ -75,9 +78,10 @@ class UserProvider with ChangeNotifier {
         'promotionType': promotionType,
         'categories': categories,
         'days': days,
-        'address': address,
+        'cities': cities,
+        "areas": areas,
         'description': description,
-        "verified": 0,
+        "verified": "0",
         "userId": uid,
       });
       return true;
@@ -99,6 +103,14 @@ class UserProvider with ChangeNotifier {
 
   deletePost(String id) {
     _firestore.collection("posts").doc(id).delete();
+  }
+
+  updatedate(String id, String days) {
+    _firestore.collection("posts").doc(id).update({
+      "vdate": FieldValue.delete(),
+      "days": days,
+      "verified": "0",
+    });
   }
 
   Future<String> signInWithGoogle() async {
@@ -132,7 +144,7 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       _status = Status.Unauthenticated;
       notifyListeners();
-      print(e.toString());
+      Fluttertoast.showToast(msg: e.toString());
       return "fail";
     }
   }

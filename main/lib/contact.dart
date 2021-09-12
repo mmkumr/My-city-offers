@@ -22,7 +22,10 @@ class _ContactState extends State<Contact> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Center(
-          child: Text("Contact US"),
+          child: Text(
+            "Contact US",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ),
       drawer: Sidebar(),
@@ -43,9 +46,12 @@ class _ContactState extends State<Contact> {
                       Text(
                         "Phone",
                         style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       ),
-                      Text("+918337908779"),
+                      Text(
+                        "+918337908779",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ],
                   ),
                 ),
@@ -64,9 +70,12 @@ class _ContactState extends State<Contact> {
                       Text(
                         "Email",
                         style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       ),
-                      Text("mmkumr@gmail.com"),
+                      Text(
+                        "mmkumr@gmail.com",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ],
                   ),
                 ),
@@ -85,9 +94,12 @@ class _ContactState extends State<Contact> {
                       Text(
                         "Address",
                         style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       ),
-                      Text("Brahmapur, Ganjam, Odisha"),
+                      Text(
+                        "Brahmapur, Ganjam, Odisha",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ],
                   ),
                 ),
@@ -115,7 +127,7 @@ class _ContactState extends State<Contact> {
                                         14.0, 0.0, 14.0, 8.0),
                                     child: Material(
                                       borderRadius: BorderRadius.circular(5.0),
-                                      color: Colors.grey.withOpacity(0.2),
+                                      color: Colors.white,
                                       elevation: 0.0,
                                       child: Padding(
                                         padding:
@@ -123,9 +135,13 @@ class _ContactState extends State<Contact> {
                                         child: TextFormField(
                                           controller: _email,
                                           decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
                                             border: InputBorder.none,
                                             hintText: "Email",
-                                            icon: Icon(Icons.email),
+                                            icon: Icon(
+                                              Icons.email,
+                                            ),
                                           ),
                                           validator: (value) {
                                             if (value!.isEmpty) {
@@ -142,7 +158,7 @@ class _ContactState extends State<Contact> {
                                         14.0, 8.0, 14.0, 8.0),
                                     child: Material(
                                       borderRadius: BorderRadius.circular(5.0),
-                                      color: Colors.grey.withOpacity(0.2),
+                                      color: Colors.white,
                                       elevation: 0.0,
                                       child: Padding(
                                         padding:
@@ -150,6 +166,8 @@ class _ContactState extends State<Contact> {
                                         child: TextFormField(
                                           controller: _subject,
                                           decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
                                             border: InputBorder.none,
                                             hintText: "Subject",
                                             icon: Icon(Icons.subject),
@@ -178,6 +196,8 @@ class _ContactState extends State<Contact> {
                                           maxLines: 4,
                                           controller: _body,
                                           decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
                                             border: InputBorder.none,
                                             hintText: "Body",
                                           ),
@@ -197,7 +217,7 @@ class _ContactState extends State<Contact> {
                                     child: Material(
                                         borderRadius:
                                             BorderRadius.circular(20.0),
-                                        color: Color(0xff38AFF9),
+                                        color: Colors.amber,
                                         elevation: 0.0,
                                         child: MaterialButton(
                                           onPressed: () {},
