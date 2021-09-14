@@ -38,13 +38,17 @@ class _AuthState extends State<Auth> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context);
-    if (start || events.length == 0) {
-      getPostsAll();
+
+    if (start) {
       getCategories();
-      setState(() {
-        start = false;
+      getPostsAll().then((value) {
+        setState(() {
+          start = false;
+        });
       });
     }
+
+    user.topEvents();
     List<Widget> _widgetOptions = <Widget>[
       Offers(list: offers),
       LocalAds(list: localAds),
@@ -290,8 +294,9 @@ class _AuthState extends State<Auth> {
           );
   }
 
-  getPostsAll() async {
+  Future<void> getPostsAll() async {
     final user = Provider.of<UserProvider>(context);
+    FirebaseFirestore _firestore = FirebaseFirestore.instance;
     List data = [];
     user.getPostsAll("Offer", user.userDetails["area"]).then((value) {
       data = value;

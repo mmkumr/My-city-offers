@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -72,6 +75,17 @@ class UserProvider with ChangeNotifier {
         .get()
         .then((snap) {
       return snap.docs;
+    });
+  }
+
+  Future<List> topEvents() {
+    List temp = [];
+    return _firestore.collection("topOffers").get().then((value) {
+      List to = value.docs[0].data()["list"];
+      _firestore.collection("posts").get().then((value) {
+        
+      });
+      return temp;
     });
   }
 

@@ -39,6 +39,8 @@ dependencies:
   firebase_storage: ^10.0.3
   fluttertoast: ^8.0.8
   mobile_number: ^1.0.4 
+  chewie: ^1.1.0
+  video_player: ^2.2.0
 
 dev_dependencies:
   flutter_test:
