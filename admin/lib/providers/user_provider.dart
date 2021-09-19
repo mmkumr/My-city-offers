@@ -53,43 +53,10 @@ class UserProvider with ChangeNotifier {
       return false;
     }
   }
-
-  Future<bool> updatePost(
-      String url,
-      String fileType,
-      String promotionType,
-      List categories,
-      String days,
-      List address,
-      String description,
-      String uid) async {
-    try {
-      _status = Status.Authenticating;
-      notifyListeners();
-      String id = Uuid().v1();
-      await _firestore.collection('posts').doc(id).set({
-        "time": FieldValue.serverTimestamp(),
-        "id": id,
-        "url": url,
-        "fileType": fileType,
-        'promotionType': promotionType,
-        'categories': categories,
-        'days': days,
-        'address': address,
-        'description': description,
-        "verified": 0,
-        "userId": uid,
-      });
-      return true;
-    } catch (e) {
-      print(e.toString());
-      return false;
-    }
-  }
-
-  Future<List<DocumentSnapshot>> getPosts() {
+ 
+  Future<List<DocumentSnapshot>> getPosts(String type) {
     return _firestore
-        .collection("posts")
+        .collection(type)
         .where('verified', isEqualTo: "true")
         .get()
         .then((snap) {
@@ -97,13 +64,13 @@ class UserProvider with ChangeNotifier {
     });
   }
 
-  deletePost(String id) {
-    _firestore.collection("posts").doc(id).delete();
+  deletePost(String id, String type) {
+    _firestore.collection(type).doc(id).delete();
   }
 
-  Future<List<DocumentSnapshot>> postRequest() {
+  Future<List<DocumentSnapshot>> postRequest(String type) {
     return _firestore
-        .collection("posts")
+        .collection(type)
         .where('verified', isEqualTo: "0")
         .get()
         .then((snap) {
@@ -111,20 +78,45 @@ class UserProvider with ChangeNotifier {
     });
   }
 
-  updateRequest(String id, String vdata) {
-    _firestore.collection("posts").doc(id).update({
+  updateRequest(String id, String vdata, String type) {
+    _firestore.collection(type).doc(id).update({
       "verified": vdata,
       "vdate": DateTime.now(),
     });
   }
 
-  addCategory(String category) {
-    _firestore.collection("categories").get().then((value) {
-      List data = value.docs[0].data()["list"];
-      data.insert(0, category);
-      _firestore.collection("categories").doc("3fxDvAgSjUGYLROVD0Wm").update({
-        "list": data,
+  updateTop(List top, String type) {
+    List ref = [];
+    _firestore.collection(type).where("top", isEqualTo: true).get().then((value) {
+      for (int i = 0; i < value.docs.length; ++i) {
+        _firestore.collection(type).doc(value.docs[i].data()['id']).update({
+          "top": false,
+        });
+      }
+    });
+    for (int i = 0; i < top.length; ++i) {
+      var temp = _firestore.collection(type).doc(top[i]);
+      temp.update({
+        "top": true,
       });
+      ref.insert(i, temp);
+    }
+    _firestore.collection("top" + type).doc("qunSkah202XkhkKPvPAW").update({
+      "list": ref,
+    });
+  }
+ 
+
+  Future<List> getTop(String type) {
+    return _firestore.collection("top" + type).get().then((snap) {
+      return snap.docs[0].data()["list"];
+    });
+  }
+
+
+  addCategory(List category) {
+    _firestore.collection("categories").doc("3fxDvAgSjUGYLROVD0Wm").update({
+      "list": FieldValue.arrayUnion(category),
     });
   }
 

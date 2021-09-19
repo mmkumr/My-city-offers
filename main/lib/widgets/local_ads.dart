@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:video_player/video_player.dart';
 
 import 'video_items.dart';
@@ -14,36 +15,36 @@ class LocalAds extends StatefulWidget {
 
 class _LocalAdsState extends State<LocalAds> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List toplist = [];
+  List topList = [];
   List top = [];
   bool start = true;
-  List offers = [];
-  List temp = [];
+  List totalList = [];
+  String ref = "topLocal Ad";
+  String doc = "qunSkah202XkhkKPvPAW";
   @override
   Widget build(BuildContext context) {
-    _firestore.collection("topLocalAds").get().then((value) {
-      setState(() {
-        toplist = value.docs[0].data()["list"];
+    if (start) {
+      _firestore.collection(ref).doc(doc).get().then((value) {
+        topList = value.data()!["list"];
+        for (int i = 0; i < topList.length; ++i) {
+          topList[i].get().then((value) {
+            setState(() {
+              top.insert(i, value);
+            });
+          });
+        }
       });
-    });
-    for (int i = 0; i < toplist.length && top.length < toplist.length; ++i) {
-      temp = widget.list.where((element) {
-        return element.data()["id"] == toplist[i];
-      }).toList();
-      top.insert(
-        i,
-        temp[0],
-      );
+      setState(() {
+        totalList = top + widget.list;
+        start = false;
+      });
     }
-    widget.list.removeWhere((element) => element.data()["top"]);
-    setState(() {
-      offers = top + widget.list;
-    });
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.725,
       child: GridView.builder(
         scrollDirection: Axis.vertical,
-        itemCount: widget.list.length == 0 ? 0 : widget.list.length,
+        itemCount: totalList.length,
         gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
           childAspectRatio: 1.7,
@@ -53,23 +54,23 @@ class _LocalAdsState extends State<LocalAds> {
             children: [
               Flexible(
                 child: GridTile(
-                  child: widget.list[index].data()["fileType"] == "Video"
-                      ? widget.list[index].data()["url"] == null
+                  child: totalList[index].data()["fileType"] == "Video"
+                      ? totalList[index].data()["url"] == null
                           ? Container()
                           : VideoItems(
                               videoPlayerController:
                                   VideoPlayerController.network(
-                                widget.list[index].data()["url"],
+                                totalList[index].data()["url"],
                               ),
                               looping: false,
                               autoplay: false,
                             )
-                      : widget.list[index].data()["url"] == null
+                      : totalList[index].data()["url"] == null
                           ? Container()
                           : Container(
                               height: 250,
                               child: Image.network(
-                                widget.list[index].data()["url"],
+                                totalList[index].data()["url"],
                               ),
                             ),
                 ),
@@ -81,7 +82,19 @@ class _LocalAdsState extends State<LocalAds> {
                       child: MaterialButton(
                         minWidth: MediaQuery.of(context).size.width * 0.5,
                         color: Colors.white70,
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text(
+                                "Description",
+                                textAlign: TextAlign.center,
+                              ),
+                              content:
+                                  Text(totalList[index].data()["description"]),
+                            ),
+                          );
+                        },
                         child: Text("Details"),
                       ),
                     ),

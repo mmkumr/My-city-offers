@@ -67,10 +67,8 @@ class UserProvider with ChangeNotifier {
     String uid,
   ) async {
     try {
-      _status = Status.Authenticating;
-      notifyListeners();
       String id = Uuid().v1();
-      await _firestore.collection('posts').doc(id).set({
+      await _firestore.collection(promotionType).doc(id).set({
         "time": FieldValue.serverTimestamp(),
         "id": id,
         "url": url,
@@ -83,6 +81,7 @@ class UserProvider with ChangeNotifier {
         'description': description,
         "verified": "0",
         "userId": uid,
+        "top": false,
       });
       return true;
     } catch (e) {
@@ -91,9 +90,9 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<List<DocumentSnapshot>> getPosts() {
+  Future<List<DocumentSnapshot>> getPosts(String type) {
     return _firestore
-        .collection("posts")
+        .collection(type)
         .where('userId', isEqualTo: user.uid)
         .get()
         .then((snap) {
@@ -101,12 +100,12 @@ class UserProvider with ChangeNotifier {
     });
   }
 
-  deletePost(String id) {
-    _firestore.collection("posts").doc(id).delete();
+  deletePost(String id, String type) {
+    _firestore.collection(type).doc(id).delete();
   }
 
-  updatedate(String id, String days) {
-    _firestore.collection("posts").doc(id).update({
+  updatedate(String id, String days, String type) {
+    _firestore.collection(type).doc(id).update({
       "vdate": FieldValue.delete(),
       "days": days,
       "verified": "0",

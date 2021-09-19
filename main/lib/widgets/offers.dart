@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:video_player/video_player.dart';
 
 import 'video_items.dart';
 
 class Offers extends StatefulWidget {
-  List list;
+  final List list;
   Offers({Key? key, required this.list}) : super(key: key);
 
   @override
@@ -14,39 +15,36 @@ class Offers extends StatefulWidget {
 
 class _OffersState extends State<Offers> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List toplist = [];
+  List topList = [];
   List top = [];
   bool start = true;
-  List offers = [];
-  List temp = [];
+  List totalList = [];
+  String ref = "topOffer";
+  String doc = "qunSkah202XkhkKPvPAW";
   @override
   Widget build(BuildContext context) {
-    _firestore.collection("topOffers").get().then((value) {
-      setState(() {
-        toplist = value.docs[0].data()["list"];
+    if (start) {
+      _firestore.collection(ref).doc(doc).get().then((value) {
+        topList = value.data()!["list"];
+        for (int i = 0; i < topList.length; ++i) {
+          topList[i].get().then((value) {
+            setState(() {
+              top.insert(i, value);
+            });
+          });
+        }
       });
-    });
-    for (int i = 0;
-        i < toplist.length && top.length < toplist.length;
-        ++i) {
-      temp = widget.list.where((element) {
-        return element.data()["id"] == toplist[i];
-      }).toList();
-      top.insert(
-        i,
-        temp[0],
-      );
+      setState(() {
+        totalList = top + widget.list;
+        start = false;
+      });
     }
-    widget.list.removeWhere((element) => element.data()["top"]);
-    setState(() {
-      offers = top + widget.list;
-    });
     return Container(
       color: Colors.black,
       height: MediaQuery.of(context).size.height * 0.725,
       child: GridView.builder(
         scrollDirection: Axis.vertical,
-        itemCount: offers.length,
+        itemCount: totalList.length,
         gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
           childAspectRatio: 1.7,
@@ -56,20 +54,20 @@ class _OffersState extends State<Offers> {
             children: [
               Flexible(
                 child: GridTile(
-                  child: offers[index].data()["fileType"] == "Video"
+                  child: totalList[index].data()["fileType"] == "Video"
                       ? VideoItems(
                           videoPlayerController: VideoPlayerController.network(
-                            offers[index].data()["url"],
+                            totalList[index].data()["url"],
                           ),
                           looping: false,
                           autoplay: false,
                         )
-                      : offers[index].data()["url"] == null
+                      : totalList[index].data()["url"] == null
                           ? Container()
                           : Container(
                               height: 250,
                               child: Image.network(
-                                offers[index].data()["url"],
+                                totalList[index].data()["url"],
                               ),
                             ),
                 ),
@@ -80,7 +78,19 @@ class _OffersState extends State<Offers> {
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width * 0.5,
                       color: Colors.white70,
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(
+                              "Description",
+                              textAlign: TextAlign.center,
+                            ),
+                            content:
+                                Text(totalList[index].data()["description"]),
+                          ),
+                        );
+                      },
                       child: Text("Details"),
                     ),
                   ),

@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
-class OfferRequests extends StatefulWidget {
-  OfferRequests({Key? key}) : super(key: key);
+class EventRequests extends StatefulWidget {
+  EventRequests({Key? key}) : super(key: key);
 
   @override
-  _OfferRequestsState createState() => _OfferRequestsState();
+  _EventRequestsState createState() => _EventRequestsState();
 }
 
-class _OfferRequestsState extends State<OfferRequests> {
+class _EventRequestsState extends State<EventRequests> {
   GlobalKey<FormState> updateCategory = GlobalKey<FormState>();
   TextEditingController _category = TextEditingController();
   List posts = [];
@@ -28,7 +28,7 @@ class _OfferRequestsState extends State<OfferRequests> {
         backgroundColor: Colors.amber,
         centerTitle: true,
         title: Text(
-          "Offer request",
+          "Event request",
           style: TextStyle(
             color: Colors.white,
           ),
@@ -47,6 +47,17 @@ class _OfferRequestsState extends State<OfferRequests> {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Type: " + posts[index].data()["promotionType"],
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
                 Container(
                   child: posts[index].data()["fileType"] == "Video"
                       ? VideoItems(
@@ -81,11 +92,12 @@ class _OfferRequestsState extends State<OfferRequests> {
                     Expanded(
                       child: MaterialButton(
                         onPressed: () {
-                          user.updateRequest(posts[index].data()["id"], "true", "Offer");
+                          user.updateRequest(
+                              posts[index].data()["id"], "true", "Event");
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => OfferRequests(),
+                              builder: (context) => EventRequests(),
                             ),
                           );
                         },
@@ -102,11 +114,11 @@ class _OfferRequestsState extends State<OfferRequests> {
                       child: MaterialButton(
                         onPressed: () {
                           user.updateRequest(
-                              posts[index].data()["id"], "false", "Offer");
+                              posts[index].data()["id"], "false", "Event");
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => OfferRequests(),
+                              builder: (context) => EventRequests(),
                             ),
                           );
                         },
@@ -131,7 +143,7 @@ class _OfferRequestsState extends State<OfferRequests> {
 
   getPosts() async {
     final user = Provider.of<UserProvider>(context);
-    List data = await user.postRequest("Offer");
+    List data = await user.postRequest("Event");
     if (mounted)
       super.setState(() {
         posts = data;

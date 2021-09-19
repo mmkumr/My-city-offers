@@ -44,17 +44,17 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:208513486933:android:a1775aa9bd72048ca444dc",
+        "mobilesdk_app_id": "1:208513486933:android:a8c2085228edf52fa444dc",
         "android_client_info": {
-          "package_name": "com.example.city_offers"
+          "package_name": "com.example.main"
         }
       },
       "oauth_client": [
         {
-          "client_id": "208513486933-1ilsf4rbnb5vuldgi1qammpqfi62vol0.apps.googleusercontent.com",
+          "client_id": "208513486933-i8oj7fmlc4lgia6v1oiqkfg9q08ss986.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.city_offers",
+            "package_name": "com.example.main",
             "certificate_hash": "a0ae164ed2c1cdf2bc8b9e09a184a21a5324f16e"
           }
         },

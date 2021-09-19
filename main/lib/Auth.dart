@@ -24,9 +24,10 @@ class Auth extends StatefulWidget {
 class _AuthState extends State<Auth> {
   List categoriesList = [];
   String? _category;
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   List offers = [];
   List localAds = [];
+  List _widgetOptions = [];
   List events = [];
   bool start = true;
   void _onItemTapped(int index) {
@@ -44,12 +45,16 @@ class _AuthState extends State<Auth> {
       getPostsAll().then((value) {
         setState(() {
           start = false;
+          _selectedIndex = 1;
+        });
+        Future.delayed(Duration(seconds: 2), () {
+          setState(() {
+            _selectedIndex = 0;
+          });
         });
       });
     }
-
-    user.topEvents();
-    List<Widget> _widgetOptions = <Widget>[
+    _widgetOptions = <Widget>[
       Offers(list: offers),
       LocalAds(list: localAds),
       Events(list: events),
@@ -79,132 +84,138 @@ class _AuthState extends State<Auth> {
               ),
             ),
             drawer: Sidebar(),
-            body: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, Profile.name);
-                        },
-                        child: Container(
-                          alignment: Alignment.topLeft,
-                          color: Colors.black,
-                          height: 100,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  width: 60,
-                                  height: 60,
-                                  child: Image.network(
-                                    user.userDetails["photoUrl"],
-                                  ),
-                                ),
-                                Text(
-                                  user.userDetails["name"].toString().substring(
-                                      0,
-                                      user.userDetails["name"]
-                                          .toString()
-                                          .indexOf(" ")),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: true,
-                      child: Expanded(
-                        child: DropdownButtonFormField<String>(
-                          focusColor: Colors.white,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: "Category",
-                            hintStyle: TextStyle(
-                              color: Colors.orange,
-                            ),
-                          ),
-                          value: _category,
-                          elevation: 10,
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                          items: categoriesList
-                              .map<DropdownMenuItem<String>>((value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _category = value!;
-                            });
-                            getPostsCat();
-                            setState(() {
-                              _widgetOptions = <Widget>[
-                                Offers(list: offers),
-                                LocalAds(list: localAds),
-                                Events(list: events),
-                              ];
-                            });
+            body: Container(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, Profile.name);
                           },
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).pushNamed(UpdateCities.name);
-                        },
-                        child: Container(
-                          alignment: Alignment.topRight,
-                          color: Colors.black,
-                          height: 80,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey,
-                                    blurRadius: 2.0,
-                                    spreadRadius: 0.0,
-                                    // shadow direction: bottom right
+                          child: Container(
+                            alignment: Alignment.topLeft,
+                            color: Colors.black,
+                            height: 100,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    width: 60,
+                                    height: 60,
+                                    child: Image.network(
+                                      user.userDetails["photoUrl"],
+                                    ),
+                                  ),
+                                  Text(
+                                    user.userDetails["name"]
+                                        .toString()
+                                        .substring(
+                                            0,
+                                            user.userDetails["name"]
+                                                .toString()
+                                                .indexOf(" ")),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
                                   )
                                 ],
                               ),
-                              height: 40,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 10.0),
-                                child: Text(
-                                  user.userDetails["area"],
-                                  style: TextStyle(
-                                      fontSize: 15, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        visible: true,
+                        child: Expanded(
+                          child: DropdownButtonFormField<String>(
+                            focusColor: Colors.white,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
+                              hintText: "Category",
+                              hintStyle: TextStyle(
+                                color: Colors.orange,
+                              ),
+                            ),
+                            value: _category,
+                            elevation: 10,
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                            items: categoriesList
+                                .map<DropdownMenuItem<String>>((value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _category = value!;
+                              });
+                              getPostsCat();
+                              setState(() {
+                                _widgetOptions = <Widget>[
+                                  Offers(
+                                    list: offers,
+                                  ),
+                                  LocalAds(list: localAds),
+                                  Events(list: events),
+                                ];
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).pushNamed(UpdateCities.name);
+                          },
+                          child: Container(
+                            alignment: Alignment.topRight,
+                            color: Colors.black,
+                            height: 80,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      blurRadius: 2.0,
+                                      spreadRadius: 0.0,
+                                      // shadow direction: bottom right
+                                    )
+                                  ],
+                                ),
+                                height: 40,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    user.userDetails["area"],
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                _widgetOptions[_selectedIndex],
-              ],
+                    ],
+                  ),
+                  _widgetOptions[_selectedIndex],
+                ],
+              ),
             ),
             bottomNavigationBar: BottomNavigationBar(
               items: const <BottomNavigationBarItem>[
@@ -296,9 +307,8 @@ class _AuthState extends State<Auth> {
 
   Future<void> getPostsAll() async {
     final user = Provider.of<UserProvider>(context);
-    FirebaseFirestore _firestore = FirebaseFirestore.instance;
     List data = [];
-    user.getPostsAll("Offer", user.userDetails["area"]).then((value) {
+    user.getPostsAll("Offer", await user.userDetails["area"]).then((value) {
       data = value;
       if (mounted)
         setState(() {
@@ -318,7 +328,7 @@ class _AuthState extends State<Auth> {
         });
     });
 
-    user.getPostsAll("Local Ad.", user.userDetails["area"]).then((value) {
+    user.getPostsAll("Local Ad", await user.userDetails["area"]).then((value) {
       data = value;
       if (mounted)
         setState(() {
@@ -338,7 +348,7 @@ class _AuthState extends State<Auth> {
         });
     });
 
-    user.getPostsAll("Event", user.userDetails["area"]).then((value) {
+    user.getPostsAll("Event", await user.userDetails["area"]).then((value) {
       data = value;
       if (mounted)
         setState(() {

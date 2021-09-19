@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:video_player/video_player.dart';
+
 import 'main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -46,8 +48,8 @@ class _AddItemsState extends State<AddItems> {
   TextEditingController _valid = TextEditingController();
   List? categoriesList;
   List selectedCategoryList = [];
-  String duration = "";
-
+  int duration = 0;
+  int size = 0;
   List? _category = [];
   List _selectedCategories = [];
   List selectedAddress = [];
@@ -143,16 +145,15 @@ class _AddItemsState extends State<AddItems> {
                             if (result != null) {
                               setState(() {
                                 file = File(result.files.single.path);
+                                size = result.files.single.size;
                                 fileName = result.files.first.name;
                               });
-                              final FlutterFFprobe flutterFFprobe =
-                                  FlutterFFprobe();
-                              MediaInformation mediaInformation =
-                                  await flutterFFprobe
-                                      .getMediaInformation(file!.path);
-                              Map? mp = mediaInformation.getMediaProperties();
-                              setState(() {
-                                duration = mp!["duration"];
+                              VideoPlayerController vfile =
+                                  VideoPlayerController.file(file!);
+                              vfile.initialize().then((value) {
+                                setState(() {
+                                  duration = vfile.value.duration.inSeconds;
+                                });
                               });
                             } else {
                               // User canceled the picker
@@ -221,7 +222,7 @@ class _AddItemsState extends State<AddItems> {
                           style: TextStyle(
                             color: Colors.black,
                           ),
-                          items: <String>["Offer", "Local Ad.", "Event"]
+                          items: <String>["Offer", "Local Ad", "Event"]
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -364,9 +365,9 @@ class _AddItemsState extends State<AddItems> {
                                 });
                               }
                               if (filetype == "Video") {
-                                if (double.parse(duration) > 30.0) {
+                                if (duration > (3 * 60) && size > 50000000) {
                                   Fluttertoast.showToast(
-                                      msg: "Duration is more than 30 secs.");
+                                      msg: "Duration is more than 3 minutes or file size is more than 50 GB.");
                                 } else {
                                   Fluttertoast.showToast(
                                       msg: "Uploading files");

@@ -4,14 +4,14 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'widgets/video_items.dart';
 
-class Offers extends StatefulWidget {
-  Offers({Key? key}) : super(key: key);
+class LocalAds extends StatefulWidget {
+  LocalAds({Key? key}) : super(key: key);
 
   @override
-  _OffersState createState() => _OffersState();
+  _LocalAdsState createState() => _LocalAdsState();
 }
 
-class _OffersState extends State<Offers> {
+class _LocalAdsState extends State<LocalAds> {
   List posts = [];
   bool start = true;
   @override
@@ -29,7 +29,7 @@ class _OffersState extends State<Offers> {
         backgroundColor: Colors.amber,
         centerTitle: true,
         title: Text(
-          "Offers",
+          "Local Ads",
           style: TextStyle(
             color: Colors.white,
           ),
@@ -114,11 +114,11 @@ class _OffersState extends State<Offers> {
                     Expanded(
                       child: MaterialButton(
                         onPressed: () {
-                          user.deletePost(posts[index].data()["id"], "Offer");
+                          user.deletePost(posts[index].data()["id"], "Local Ad");
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Offers(),
+                              builder: (context) => LocalAds(),
                             ),
                           );
                         },
@@ -143,7 +143,7 @@ class _OffersState extends State<Offers> {
 
   getPosts() {
     final user = Provider.of<UserProvider>(context);
-    user.getPosts("Offer").then((value) {
+    user.getPosts("Local Ad").then((value) {
       if (mounted)
         super.setState(() {
           posts = value;

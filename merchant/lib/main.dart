@@ -1,6 +1,11 @@
+import 'package:merchant/expired_events.dart';
+import 'package:merchant/expired_localads.dart';
+import 'package:merchant/manage_events.dart';
+import 'package:merchant/manage_localads.dart';
+import 'package:merchant/manage_offers.dart';
+
 import 'cities.dart';
-import 'expired_items.dart';
-import 'manage_items.dart';
+import 'expired_offers.dart';
 import 'profile.dart';
 import 'providers/user_provider.dart';
 import 'signup.dart';
@@ -214,11 +219,11 @@ class _AuthState extends State<Auth> {
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => ManageItems(),
+                                      builder: (context) => ManageOffers(),
                                     ),
                                   );
                                 },
-                                title: Text("Manage items"),
+                                title: Text("Manage Offers"),
                               ),
                             ),
                           ),
@@ -230,11 +235,75 @@ class _AuthState extends State<Auth> {
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => ExpiredItems(),
+                                      builder: (context) => ManageLocalads(),
                                     ),
                                   );
                                 },
-                                title: Text("Expired items"),
+                                title: Text("Manage Local Ads"),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              color: Colors.white,
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ManageEvents(),
+                                    ),
+                                  );
+                                },
+                                title: Text("Manage Events"),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              color: Colors.white,
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ExpiredOffers(),
+                                    ),
+                                  );
+                                },
+                                title: Text("Expired Offers"),
+                              ),
+                            ),
+                          ),
+Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              color: Colors.white,
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ExpiredLocalads(),
+                                    ),
+                                  );
+                                },
+                                title: Text("Expired Local Ads"),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              color: Colors.white,
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ExpiredEvents(),
+                                    ),
+                                  );
+                                },
+                                title: Text("Expired Events"),
                               ),
                             ),
                           )

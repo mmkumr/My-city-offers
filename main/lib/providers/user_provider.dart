@@ -66,28 +66,19 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<List<DocumentSnapshot>> getPostsAll(String type, String area) {
+  Future<List> getPostsAll(String type, String area) {
     return _firestore
-        .collection("posts")
-        .where("promotionType", isEqualTo: type)
+        .collection(type)
         .where("verified", isEqualTo: "true")
+        .where("top", isEqualTo: false)
         .where("areas", arrayContains: area)
         .get()
         .then((snap) {
-      return snap.docs;
+      List data = snap.docs; 
+      return data;
     });
   }
-
-  Future<List> topEvents() {
-    List temp = [];
-    return _firestore.collection("topOffers").get().then((value) {
-      List to = value.docs[0].data()["list"];
-      _firestore.collection("posts").get().then((value) {
-        
-      });
-      return temp;
-    });
-  }
+ 
 
   updateArea(String cities, String area) async {
     _firestore

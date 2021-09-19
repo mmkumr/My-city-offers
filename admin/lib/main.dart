@@ -1,11 +1,13 @@
+import 'package:admin/event_request.dart';
+import 'package:admin/events.dart';
+import 'package:admin/localAds.dart';
+import 'package:admin/localAds_requests.dart';
 import 'package:admin/providers/user_provider.dart';
 import 'package:algolia/algolia.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-
-import 'ads_list.dart';
 import 'categories.dart';
 import 'offer_requests.dart';
 import 'offers.dart';
@@ -53,11 +55,27 @@ class _HomeState extends State<Home> {
   TextEditingController _category = TextEditingController();
   TextEditingController _city = TextEditingController();
   TextEditingController _area = TextEditingController();
-  TextEditingController imagePrice = TextEditingController();
-  TextEditingController videoPrice = TextEditingController();
+  List<TextEditingController> to = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController()
+  ];
+  List<TextEditingController> tl = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController()
+  ];
+  List<TextEditingController> te = [
+    TextEditingController(),
+    TextEditingController(),
+    TextEditingController()
+  ];
   GlobalKey<FormState> addCategory = GlobalKey<FormState>();
   GlobalKey<FormState> addPlace = GlobalKey<FormState>();
   GlobalKey<FormState> price = GlobalKey<FormState>();
+  GlobalKey<FormState> topEvents = GlobalKey<FormState>();
+  GlobalKey<FormState> topLocalAds = GlobalKey<FormState>();
+  GlobalKey<FormState> topOffers = GlobalKey<FormState>();
   int normalUsers = 0;
   int merchants = 0;
   int requests = 0;
@@ -73,6 +91,7 @@ class _HomeState extends State<Home> {
         start = false;
       });
     }
+    getTop();
     List dasboarditems = [
       {"title": "Normal users", "value": normalUsers.toString()},
       {"title": "Merchants", "value": merchants.toString()},
@@ -147,7 +166,7 @@ class _HomeState extends State<Home> {
                                 FlatButton(
                                   onPressed: () {
                                     if (addCategory.currentState!.validate()) {
-                                      user.addCategory(_category.text);
+                                      user.addCategory([_category.text]);
                                       Navigator.of(context).pop();
                                       Fluttertoast.showToast(
                                           msg: "Category added");
@@ -198,7 +217,38 @@ class _HomeState extends State<Home> {
                           );
                         },
                         title: Text(
-                          "Manage Posts",
+                          "Manage Offers",
+                          style: TextStyle(),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      color: Colors.white,
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => LocalAds(),
+                            ),
+                          );
+                        },
+                        title: Text(
+                          "Manage Local Ads",
+                          style: TextStyle(),
+                        ),
+                      ),
+                    ),Card(
+                      color: Colors.white,
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MCEvents(),
+                            ),
+                          );
+                        },
+                        title: Text(
+                          "Manage Events",
                           style: TextStyle(),
                         ),
                       ),
@@ -214,7 +264,39 @@ class _HomeState extends State<Home> {
                           );
                         },
                         title: Text(
-                          "Post requests",
+                          "Offers requests",
+                          style: TextStyle(),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      color: Colors.white,
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => LocalAdsRequests(),
+                            ),
+                          );
+                        },
+                        title: Text(
+                          "Local Ads requests",
+                          style: TextStyle(),
+                        ),
+                      ),
+                    ),
+Card(
+                      color: Colors.white,
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EventRequests(),
+                            ),
+                          );
+                        },
+                        title: Text(
+                          "Event requests",
                           style: TextStyle(),
                         ),
                       ),
@@ -339,65 +421,100 @@ class _HomeState extends State<Home> {
                               content: Container(
                                 height: 300,
                                 width: MediaQuery.of(context).size.width * 0.8,
-                                child: ListView(
-                                  children: [
-                                    Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => AdsList(
-                                                i: "o1",
-                                              ),
+                                child: Form(
+                                  key: topOffers,
+                                  child: ListView(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: to[0],
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Top 1",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
                                             ),
-                                          );
-                                        },
-                                        leading: Text("Top1"),
-                                        title: Text(
-                                          "Hairstyle parlour",
-                                          softWrap: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {}
+                                            return null;
+                                          },
                                         ),
                                       ),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => AdsList(
-                                                i: "o2",
-                                              ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: to[1],
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Top 2",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
                                             ),
-                                          );
-                                        },
-                                        leading: Text("Top2"),
-                                        title:
-                                            Text("Sweets shop", softWrap: true),
-                                      ),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => AdsList(
-                                                i: "o3",
-                                              ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
                                             ),
-                                          );
-                                        },
-                                        leading: Text("Top3"),
-                                        title: Text("Shopping mall",
-                                            softWrap: true),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {}
+                                            return null;
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: to[2],
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Top 3",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {}
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                               actions: <Widget>[
                                 FlatButton(
                                   onPressed: () {
-                                    print(selectedTopAds[0].id);
+                                    List temp = [];
+                                    for (int i = 0; i < to.length; ++i) {
+                                      if (to[i].text.isNotEmpty) {
+                                        temp.insert(i, to[i].text);
+                                      }
+                                    }
+                                    user.updateTop(temp, "Offer");
+                                    to[0].clear();
+                                    to[1].clear();
+                                    to[2].clear();
+                                    Navigator.pop(context);
                                   },
                                   child: Text("Add"),
                                 ),
@@ -428,65 +545,100 @@ class _HomeState extends State<Home> {
                               content: Container(
                                 height: 300,
                                 width: MediaQuery.of(context).size.width * 0.8,
-                                child: ListView(
-                                  children: [
-                                    Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => AdsList(
-                                                i: "l1",
-                                              ),
+                                child: Form(
+                                  key: topLocalAds,
+                                  child: ListView(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: tl[0],
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Top 1",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
                                             ),
-                                          );
-                                        },
-                                        leading: Text("Top1"),
-                                        title: Text(
-                                          "Hairstyle parlour",
-                                          softWrap: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {}
+                                            return null;
+                                          },
                                         ),
                                       ),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => AdsList(
-                                                i: "l2",
-                                              ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: tl[1],
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Top 2",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
                                             ),
-                                          );
-                                        },
-                                        leading: Text("Top2"),
-                                        title:
-                                            Text("Sweets shop", softWrap: true),
-                                      ),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => AdsList(
-                                                i: "l3",
-                                              ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
                                             ),
-                                          );
-                                        },
-                                        leading: Text("Top3"),
-                                        title: Text("Shopping mall",
-                                            softWrap: true),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {}
+                                            return null;
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: tl[2],
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Top 3",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {}
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                               actions: <Widget>[
                                 FlatButton(
                                   onPressed: () {
-                                    print(selectedTopAds[0].id);
+                                    List temp = [];
+                                    for (int i = 0; i < tl.length; ++i) {
+                                      if (tl[i].text.isNotEmpty) {
+                                        temp.insert(i, tl[i].text);
+                                      }
+                                    }
+                                    user.updateTop(temp, "Local Ad");
+                                    tl[0].clear();
+                                    tl[1].clear();
+                                    tl[2].clear();
+                                    Navigator.pop(context);
                                   },
                                   child: Text("Add"),
                                 ),
@@ -517,65 +669,100 @@ class _HomeState extends State<Home> {
                               content: Container(
                                 height: 300,
                                 width: MediaQuery.of(context).size.width * 0.8,
-                                child: ListView(
-                                  children: [
-                                    Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => AdsList(
-                                                i: "e1",
-                                              ),
+                                child: Form(
+                                  key: topEvents,
+                                  child: ListView(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: te[0],
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Top 1",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
                                             ),
-                                          );
-                                        },
-                                        leading: Text("Top1"),
-                                        title: Text(
-                                          "Hairstyle parlour",
-                                          softWrap: true,
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {}
+                                            return null;
+                                          },
                                         ),
                                       ),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => AdsList(
-                                                i: "e2",
-                                              ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: te[1],
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Top 2",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
                                             ),
-                                          );
-                                        },
-                                        leading: Text("Top2"),
-                                        title:
-                                            Text("Sweets shop", softWrap: true),
-                                      ),
-                                    ),
-                                    Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => AdsList(
-                                                i: "e3",
-                                              ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
                                             ),
-                                          );
-                                        },
-                                        leading: Text("Top3"),
-                                        title: Text("Shopping mall",
-                                            softWrap: true),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {}
+                                            return null;
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextFormField(
+                                          controller: te[2],
+                                          decoration: InputDecoration(
+                                            filled: true,
+                                            fillColor: Colors.white,
+                                            hintText: "Top 3",
+                                            labelStyle: TextStyle(
+                                              color: Color(0xff6DFFF0),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          validator: (value) {
+                                            if (value!.isEmpty) {}
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                               actions: <Widget>[
                                 FlatButton(
                                   onPressed: () {
-                                    print(selectedTopAds[0].id);
+                                    List temp = [];
+                                    for (int i = 0; i < te.length; ++i) {
+                                      if (te[i].text.isNotEmpty) {
+                                        temp.insert(i, te[i].text);
+                                      }
+                                    }
+                                    user.updateTop(temp, "Event");
+                                    te[0].clear();
+                                    te[1].clear();
+                                    te[2].clear();
+                                    Navigator.pop(context);
                                   },
                                   child: Text("Add"),
                                 ),
@@ -604,91 +791,6 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                     ),
-                    /* Card(
-                      color: Colors.white,
-                      child: ListTile(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                              title: Text("Pricing"),
-                              content: Form(
-                                key: price,
-                                child: Container(
-                                  height: 300,
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          controller: imagePrice,
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            hintText: "Price for picture",
-                                            labelText: "Price for picture",
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                          ),
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return "The image price\nfield cannot be empty";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: TextFormField(
-                                          controller: videoPrice,
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: Colors.white,
-                                            hintText: "Price for Video/sec",
-                                            labelText: "Price for Video/sec",
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                          ),
-                                          validator: (value) {
-                                            if (value!.isEmpty) {
-                                              return "The video price\nfield cannot be empty";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              actions: <Widget>[
-                                FlatButton(
-                                  onPressed: () {
-                                    if (price.currentState!.validate()) {}
-                                  },
-                                  child: Text("Add"),
-                                ),
-                                FlatButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text("cancel"),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        title: Text(
-                          "Pricing",
-                          style: TextStyle(),
-                        ),
-                      ),
-                    ), */
                   ],
                 ),
               ),
@@ -747,6 +849,37 @@ class _HomeState extends State<Home> {
     );
   }
 
+  getTop() async {
+    final user = Provider.of<UserProvider>(context);
+    var data = await user.getTop("Event");
+    if (mounted)
+      for (int i = 0; i < data.length; ++i) {
+        data[i].get().then((value) {
+          setState(() {
+            te[i].text = value.data()!["id"];
+          });
+        });
+      }
+    data = await user.getTop("Local Ad");
+    if (mounted)
+      for (int i = 0; i < data.length; ++i) {
+        data[i].get().then((value) {
+          setState(() {
+            tl[i].text = value.data()!["id"];
+          });
+        });
+      }
+    data = await user.getTop("Offer");
+    if (mounted)
+      for (int i = 0; i < data.length; ++i) {
+        data[i].get().then((value) {
+          setState(() {
+            to[i].text = value.data()!["id"];
+          });
+        });
+      }
+  }
+
   getCount() {
     FirebaseFirestore _firestore = FirebaseFirestore.instance;
     _firestore.collection("users").get().then((value) {
@@ -762,7 +895,7 @@ class _HomeState extends State<Home> {
         });
     });
     _firestore
-        .collection("posts")
+        .collection("Offer")
         .where('verified', isEqualTo: "0")
         .get()
         .then((value) {
@@ -771,10 +904,42 @@ class _HomeState extends State<Home> {
           requests = value.docs.length;
         });
     });
-    _firestore.collection("posts").get().then((value) {
+    _firestore
+        .collection("Local Ad")
+        .where('verified', isEqualTo: "0")
+        .get()
+        .then((value) {
+      if (mounted)
+        setState(() {
+          requests = value.docs.length + requests;
+        });
+    });
+    _firestore
+        .collection("Event")
+        .where('verified', isEqualTo: "0")
+        .get()
+        .then((value) {
+      if (mounted)
+        setState(() {
+          requests = value.docs.length + requests;
+        });
+    });
+    _firestore.collection("Offer").get().then((value) {
       if (mounted)
         setState(() {
           offers = value.docs.length;
+        });
+    });
+    _firestore.collection("Local Ad").get().then((value) {
+      if (mounted)
+        setState(() {
+          offers = value.docs.length + offers;
+        });
+    });
+    _firestore.collection("Event").get().then((value) {
+      if (mounted)
+        setState(() {
+          offers = value.docs.length + offers;
         });
     });
   }
