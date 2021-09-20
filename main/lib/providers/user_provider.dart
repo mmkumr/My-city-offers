@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -74,11 +71,10 @@ class UserProvider with ChangeNotifier {
         .where("areas", arrayContains: area)
         .get()
         .then((snap) {
-      List data = snap.docs; 
+      List data = snap.docs;
       return data;
     });
   }
- 
 
   updateArea(String cities, String area) async {
     _firestore
@@ -91,6 +87,15 @@ class UserProvider with ChangeNotifier {
         .get()
         .then((value) {
       return value.docs[0];
+    });
+  }
+
+  updateInterests(String type, String adId, String userId) {
+    var temp = _firestore.collection("users").doc(userId);
+    List data = [];
+    data.insert(0, temp);
+    _firestore.collection(type).doc(adId).update({
+      "interested": FieldValue.arrayUnion(data),
     });
   }
 

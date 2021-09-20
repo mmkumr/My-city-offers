@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:main/providers/user_provider.dart';
+import 'package:main/widgets/imageviwer.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 import 'video_items.dart';
@@ -21,8 +25,10 @@ class _OffersState extends State<Offers> {
   List totalList = [];
   String ref = "topOffer";
   String doc = "qunSkah202XkhkKPvPAW";
+  
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
     if (start) {
       _firestore.collection(ref).doc(doc).get().then((value) {
         topList = value.data()!["list"];
@@ -35,7 +41,7 @@ class _OffersState extends State<Offers> {
         }
       });
       setState(() {
-        totalList = top + widget.list;
+        totalList = top + widget.list.reversed.toList();
         start = false;
       });
     }
@@ -53,23 +59,38 @@ class _OffersState extends State<Offers> {
           return Column(
             children: [
               Flexible(
-                child: GridTile(
-                  child: totalList[index].data()["fileType"] == "Video"
-                      ? VideoItems(
-                          videoPlayerController: VideoPlayerController.network(
-                            totalList[index].data()["url"],
-                          ),
-                          looping: false,
-                          autoplay: false,
-                        )
-                      : totalList[index].data()["url"] == null
-                          ? Container()
-                          : Container(
-                              height: 250,
-                              child: Image.network(
-                                totalList[index].data()["url"],
+                child: InkWell(
+                  onTap: totalList[index].data()["fileType"] == "Image"
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ImageViewer(
+                                url: totalList[index].data()["url"],
                               ),
                             ),
+                          );
+                        }
+                      : () {},
+                  child: GridTile(
+                    child: totalList[index].data()["fileType"] == "Video"
+                        ? VideoItems(
+                            videoPlayerController:
+                                VideoPlayerController.network(
+                              totalList[index].data()["url"],
+                            ),
+                            looping: false,
+                            autoplay: false,
+                          )
+                        : totalList[index].data()["url"] == null
+                            ? Container()
+                            : Container(
+                                height: 250,
+                                child: Image.network(
+                                  totalList[index].data()["url"],
+                                ),
+                              ),
+                  ),
                 ),
               ),
               Row(
@@ -101,7 +122,14 @@ class _OffersState extends State<Offers> {
                     child: MaterialButton(
                       minWidth: MediaQuery.of(context).size.width * 0.5,
                       color: Colors.white70,
-                      onPressed: () {},
+                      onPressed: () {
+                        user.updateInterests(
+                            "Offer",
+                            totalList[index].data()["id"],
+                            user.userDetails["userId"]);
+                        Fluttertoast.showToast(
+                            msg: "Thanks for showing interest");
+                      },
                       child: Text("Interested"),
                     ),
                   ),

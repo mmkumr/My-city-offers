@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:main/providers/user_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 import 'video_items.dart';
@@ -22,6 +25,7 @@ class _EventsState extends State<Events> {
   String doc = "qunSkah202XkhkKPvPAW";
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
     if (start) {
       _firestore.collection(ref).doc(doc).get().then((value) {
         topList = value.data()!["list"];
@@ -34,7 +38,7 @@ class _EventsState extends State<Events> {
         }
       });
       setState(() {
-        totalList = top + widget.list;
+        totalList = top + widget.list.reversed.toList();
         start = false;
       });
     }
@@ -106,7 +110,14 @@ class _EventsState extends State<Events> {
                       child: MaterialButton(
                         minWidth: MediaQuery.of(context).size.width * 0.5,
                         color: Colors.white70,
-                        onPressed: () {},
+                        onPressed: () {
+                          user.updateInterests(
+                              "Offer",
+                              totalList[index].data()["id"],
+                              user.userDetails["userId"]);
+                          Fluttertoast.showToast(
+                              msg: "Thanks for showing interest");
+                        },
                         child: Text("Interested"),
                       ),
                     ),

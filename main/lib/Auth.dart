@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:main/cities.dart';
 import 'package:main/profile.dart';
 import 'package:main/providers/user_provider.dart';
@@ -37,9 +38,16 @@ class _AuthState extends State<Auth> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context);
-
     if (start) {
       getCategories();
       getPostsAll().then((value) {
